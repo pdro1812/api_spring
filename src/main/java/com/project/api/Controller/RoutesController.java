@@ -79,38 +79,12 @@ public class RoutesController {
     }
 
     
-    //rota nome das equipes
-    @GetMapping("/equipes")
-    public ResponseEntity<List<String>> getNomesDasEquipes() {
-        long start = System.currentTimeMillis();  
-        List<String> nomesDasEquipes = routesService.getNomesDasEquipes(); // Chamando o serviço para pegar os nomes das equipes
-        long end = System.currentTimeMillis();
-    
-        return ResponseEntity.ok()
-                .header("X-Response-Time", (end - start) + "ms") // Adicionando header opcional com tempo de resposta
-                .body(nomesDasEquipes);
+    // Rota para retornar os insights das equipes com timestamp e tempo de execução
+    @GetMapping("/team-insights")
+    public ResponseEntity<Map<String, Object>> getTeamInsights() {
+        Map<String, Object> teamInsights = routesService.getTeamInsights();
+        return ResponseEntity.ok(teamInsights);
     }
-
-     // Rota para listar o total de participantes por equipe
-    @GetMapping("/equipes/participantes")
-    public ResponseEntity<Map<String, Long>> getParticipantesPorEquipe() {
-        Map<String, Long> participantesPorEquipe = routesService.getParticipantesPorEquipe();
-        return ResponseEntity.ok(participantesPorEquipe);
-    }
-
-     // Rota para listar o total de líderes por equipe
-     @GetMapping("/equipes/lideres")
-     public ResponseEntity<Map<String, Long>> getLideresPorEquipe() {
-         Map<String, Long> lideresPorEquipe = routesService.getLideresPorEquipe();
-         return ResponseEntity.ok(lideresPorEquipe);
-     }
-
-     // Rota para listar os projetos, total de projetos, projetos concluídos e porcentagem concluída de cada equipe
-     @GetMapping("/equipes/projetos")
-     public ResponseEntity<Map<String, Map<String, Object>>> getProjetosPorEquipe() {
-         Map<String, Map<String, Object>> projetosPorEquipe = routesService.getProjetosPorEquipe();
-         return ResponseEntity.ok(projetosPorEquipe);
-     }
    
 
 

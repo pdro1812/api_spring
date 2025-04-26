@@ -1,5 +1,6 @@
 package com.project.api.Service;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -55,75 +56,85 @@ public class RoutesService {
             .collect(Collectors.toList());
     }
 
-   public List<String> getNomesDasEquipes(){
-    return listData.stream()
-        .map(p -> p.getEquipe().getNome())
-        .filter(Objects::nonNull)
-        .distinct()
-        .collect(Collectors.toList());
-}
+    // Método para obter os insights da equipe
+    public Map<String, Object> getTeamInsights() {
+        long startTime = System.currentTimeMillis();  // Marca o tempo de início
 
-    public Map<String, Long> getParticipantesPorEquipe() {
-        return listData.stream()
+        // Total de membros por equipe
+        Map<String, Long> totalMembros = listData.stream()
             .collect(Collectors.groupingBy(
-                p -> p.getEquipe().getNome(),  // Agrupar pelo nome da equipe
-                Collectors.counting()          // Contar o número de participantes em cada equipe
+                p -> p.getEquipe().getNome(),
+                Collectors.counting()
             ));
-    }
 
-    // Método para contar líderes por equipe
-    // Método para contar líderes por equipe
-    public Map<String, Long> getLideresPorEquipe() {
-        return listData.stream()
-            .filter(p -> p.getEquipe().isLider() == true)  // Filtra apenas as pessoas com "lider" = true
+        // Líderes por equipe
+        Map<String, Long> totalLideres = listData.stream()
+            .filter(p -> p.getEquipe().isLider() == true)
             .collect(Collectors.groupingBy(
-                p -> p.getEquipe().getNome(),  // Agrupar pelo nome da equipe
-                Collectors.counting()          // Contar o número de líderes em cada equipe
+                p -> p.getEquipe().getNome(),
+                Collectors.counting()
             ));
-    }
+
+        // Projetos concluídos e total de projetos por equipe
+        Map<String, Map<String, Object>> projetosPorEquipe = listData.stream()
+            .collect(Collectors.groupingBy(
+                p -> p.getEquipe().getNome(),
+                Collectors.collectingAndThen(
+                    Collectors.toList(),
+                    participantes -> {
+                        long totalProjetos = participantes.stream()
+                            .flatMap(p -> p.getEquipe().getProjetos().stream())
+                            .count();
+
+                        long projetosConcluidos = participantes.stream()
+                            .flatMap(p -> p.getEquipe().getProjetos().stream())
+                            .filter(projeto -> projeto.isConcluido())
+                            .count();
+
+                        double porcentagemConcluidos = totalProjetos > 0 ?
+                            (double) projetosConcluidos / totalProjetos * 100 : 0.0;
+
+                        return Map.of(
+                            "totalProjetos", totalProjetos,
+                            "projetosConcluidos", projetosConcluidos,
+                            "porcentagemConcluidos", porcentagemConcluidos
+                        );
+                    }
+                )
+            ));
 
 
-    // Método para retornar os projetos, total de projetos e projetos concluídos por equipe
-   // Método para retornar os projetos, total de projetos, projetos concluídos e porcentagem concluída por equipe
-   public Map<String, Map<String, Object>> getProjetosPorEquipe() {
-    return listData.stream()
-        .collect(Collectors.groupingBy(
-            p -> p.getEquipe().getNome(),  // Agrupar pelo nome da equipe
-            Collectors.collectingAndThen(
-                Collectors.toList(),
-                participantes -> {
-                    // Extrair os nomes dos projetos da equipe
-                    Set<String> nomesProjetos = participantes.stream()
-                        .flatMap(p -> p.getEquipe().getProjetos().stream())
-                        .map(projeto -> projeto.getNome())
-                        .collect(Collectors.toSet());
+            Map<String, Object> teamData = listData.stream()
+            .map(p -> p.getEquipe().getNome())
+            .filter(Objects::nonNull)
+            .distinct()
+            .collect(Collectors.toMap(
+                equipe -> equipe,
+                equipe -> {
+                    long totalMembrosEquipe = totalMembros.getOrDefault(equipe, 0L);
+                    long totalLideresEquipe = totalLideres.getOrDefault(equipe, 0L);
 
-                    // Contar o total de projetos
-                    long totalProjetos = participantes.stream()
-                        .flatMap(p -> p.getEquipe().getProjetos().stream())
-                        .count();
+                    Map<String, Object> projetosInfo = projetosPorEquipe.getOrDefault(equipe, Map.of());
 
-                    // Contar os projetos concluídos
-                    long projetosConcluidos = participantes.stream()
-                        .flatMap(p -> p.getEquipe().getProjetos().stream())
-                        .filter(projeto -> projeto.isConcluido())  // Verificar se o projeto está concluído
-                        .count();
-
-                    // Calcular a porcentagem de projetos concluídos (evitar divisão por zero)
-                    double porcentagemConcluidos = totalProjetos > 0 ? 
-                        (double) projetosConcluidos / totalProjetos * 100 : 0.0;
-
-                    // Retornar a informação organizada em um Map
                     return Map.of(
-                        "nomesProjetos", nomesProjetos,
-                        "totalProjetos", totalProjetos,
-                        "projetosConcluidos", projetosConcluidos,
-                        "porcentagemConcluidos", porcentagemConcluidos
+                        "team", equipe,
+                        "total_members", totalMembrosEquipe,
+                        "leaders", totalLideresEquipe,
+                        "completed_projects", projetosInfo.getOrDefault("projetosConcluidos", 0L),
+                        "active_percentage", projetosInfo.getOrDefault("porcentagemConcluidos", 0.0)
                     );
                 }
-            )
-        ));
-}
+            ));
+
+        long endTime = System.currentTimeMillis();  
+        long executionTime = endTime - startTime;  
+
+        return Map.of(
+            "timestamp", Instant.now().toString(), 
+            "execution_time_ms", executionTime,     
+            "teams", teamData                       
+        );
+    }
 
     
 }
