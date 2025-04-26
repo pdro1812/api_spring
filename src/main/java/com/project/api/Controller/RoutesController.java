@@ -16,6 +16,7 @@ import com.project.api.Model.Data;
 import com.project.api.Service.RoutesService;
 import com.project.api.dto.SuperUserResponseDTO;
 import com.project.api.dto.TopCountryDTO;
+import com.project.api.dto.UserResponse;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -32,15 +33,18 @@ public class RoutesController {
 
    // POST que recebe a lista de pessoas e armazena
    @PostMapping("/users")
-   public String receiveData(@RequestBody List<Data> data) {
+    public ResponseEntity<UserResponse> receiveData(@RequestBody List<Data> data) {
         routesService.saveData(data);
-       return  "Pessoas recebidas com sucesso!";
-   }
+        int quantidade = data.size();
+        UserResponse response = new UserResponse("Arquivo recebido com sucesso", quantidade);
+        return ResponseEntity.ok(response);
+    }
+   
 
    @GetMapping("/users/data")
-    public List<String> listAllData() {
-        return routesService.getAllData();
-    }
+   public List<Data> listAllData() {
+       return routesService.getAllData();  
+   }
 
     // Rota para listar só os nomes filtrados
     @GetMapping("/superusers")

@@ -24,11 +24,9 @@ public class RoutesService {
     }
 
     // Retorna todos os nomes
-    public List<String> getAllData() {
-        return listData.stream()
-            .map(Data::getName)
-            .collect(Collectors.toList());
-    }
+   public List<Data> getAllData() {
+    return listData;
+}
 
 
     //retorna os supersusers score >=900 and ativo

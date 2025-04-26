@@ -1,5 +1,7 @@
 package com.project.api.Model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Data {
 
     private String name;
@@ -9,6 +11,7 @@ public class Data {
     private boolean active;
     private Team team;
 
+    @JsonProperty("nome")
     public String getName() {
         return name;
     }
@@ -17,6 +20,7 @@ public class Data {
         this.name = name;
     }
 
+    @JsonProperty("pais")
     public String getCountry() {
         return country;
     }
@@ -41,6 +45,7 @@ public class Data {
         this.score = score;
     }
 
+    @JsonProperty("ativo")
     public boolean isActive() {
         return active;
     }
