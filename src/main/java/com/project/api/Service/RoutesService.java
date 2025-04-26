@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -82,6 +83,47 @@ public class RoutesService {
     }
 
 
+    // Método para retornar os projetos, total de projetos e projetos concluídos por equipe
+   // Método para retornar os projetos, total de projetos, projetos concluídos e porcentagem concluída por equipe
+   public Map<String, Map<String, Object>> getProjetosPorEquipe() {
+    return listData.stream()
+        .collect(Collectors.groupingBy(
+            p -> p.getEquipe().getNome(),  // Agrupar pelo nome da equipe
+            Collectors.collectingAndThen(
+                Collectors.toList(),
+                participantes -> {
+                    // Extrair os nomes dos projetos da equipe
+                    Set<String> nomesProjetos = participantes.stream()
+                        .flatMap(p -> p.getEquipe().getProjetos().stream())
+                        .map(projeto -> projeto.getNome())
+                        .collect(Collectors.toSet());
+
+                    // Contar o total de projetos
+                    long totalProjetos = participantes.stream()
+                        .flatMap(p -> p.getEquipe().getProjetos().stream())
+                        .count();
+
+                    // Contar os projetos concluídos
+                    long projetosConcluidos = participantes.stream()
+                        .flatMap(p -> p.getEquipe().getProjetos().stream())
+                        .filter(projeto -> projeto.isConcluido())  // Verificar se o projeto está concluído
+                        .count();
+
+                    // Calcular a porcentagem de projetos concluídos (evitar divisão por zero)
+                    double porcentagemConcluidos = totalProjetos > 0 ? 
+                        (double) projetosConcluidos / totalProjetos * 100 : 0.0;
+
+                    // Retornar a informação organizada em um Map
+                    return Map.of(
+                        "nomesProjetos", nomesProjetos,
+                        "totalProjetos", totalProjetos,
+                        "projetosConcluidos", projetosConcluidos,
+                        "porcentagemConcluidos", porcentagemConcluidos
+                    );
+                }
+            )
+        ));
+}
 
     
 }

@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,6 +104,14 @@ public class RoutesController {
          Map<String, Long> lideresPorEquipe = routesService.getLideresPorEquipe();
          return ResponseEntity.ok(lideresPorEquipe);
      }
+
+     // Rota para listar os projetos, total de projetos, projetos concluídos e porcentagem concluída de cada equipe
+     @GetMapping("/equipes/projetos")
+     public ResponseEntity<Map<String, Map<String, Object>>> getProjetosPorEquipe() {
+         Map<String, Map<String, Object>> projetosPorEquipe = routesService.getProjetosPorEquipe();
+         return ResponseEntity.ok(projetosPorEquipe);
+     }
+   
 
 
     
