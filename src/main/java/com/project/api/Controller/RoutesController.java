@@ -2,6 +2,9 @@ package com.project.api.Controller;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -9,9 +12,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import com.project.api.Model.TeamInsight;
-
-
 import com.project.api.Model.Data;
 import com.project.api.Service.RoutesService;
 import com.project.api.dto.SuperUserResponseDTO;
@@ -64,13 +64,13 @@ public class RoutesController {
     //Rota para listar os top 5 paises dos superusers
     @GetMapping("/top-countries")
     public ResponseEntity<TopCountriesResponseDTO> listTopCountries(HttpServletRequest request){
-        long start = System.currentTimeMillis();  // Marca o início da execução
+        long start = System.currentTimeMillis();  
         List<TopCountryDTO> topCountries = routesService.getTopCountries();
-        long end = System.currentTimeMillis();  // Marca o fim da execução
+        long end = System.currentTimeMillis();  
 
         TopCountriesResponseDTO response = new TopCountriesResponseDTO(
-            Instant.now().toString(),  // Timestamp atual
-            end - start,               // Tempo de execução
+            Instant.now().toString(), 
+            end - start,              
             topCountries
         );
 
@@ -78,11 +78,34 @@ public class RoutesController {
     }
 
     
-    //Rota para listar as estatísticas por equipe com base nos membros, projetos e liderança.
-   @GetMapping("/teams/insight")
-    public List<TeamInsight> getTeamInsight() {
-        return routesService.teamInsight();
+    //rota nome das equipes
+    @GetMapping("/equipes")
+    public ResponseEntity<List<String>> getNomesDasEquipes() {
+        long start = System.currentTimeMillis();  
+        List<String> nomesDasEquipes = routesService.getNomesDasEquipes(); // Chamando o serviço para pegar os nomes das equipes
+        long end = System.currentTimeMillis();
+    
+        return ResponseEntity.ok()
+                .header("X-Response-Time", (end - start) + "ms") // Adicionando header opcional com tempo de resposta
+                .body(nomesDasEquipes);
     }
+
+     // Rota para listar o total de participantes por equipe
+    @GetMapping("/equipes/participantes")
+    public ResponseEntity<Map<String, Long>> getParticipantesPorEquipe() {
+        Map<String, Long> participantesPorEquipe = routesService.getParticipantesPorEquipe();
+        return ResponseEntity.ok(participantesPorEquipe);
+    }
+
+     // Rota para listar o total de líderes por equipe
+     @GetMapping("/equipes/lideres")
+     public ResponseEntity<Map<String, Long>> getLideresPorEquipe() {
+         Map<String, Long> lideresPorEquipe = routesService.getLideresPorEquipe();
+         return ResponseEntity.ok(lideresPorEquipe);
+     }
+
+
+    
     
 
 }

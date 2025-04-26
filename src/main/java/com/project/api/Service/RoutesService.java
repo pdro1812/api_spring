@@ -3,14 +3,14 @@ package com.project.api.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
 import com.project.api.Model.Data;
-import com.project.api.Model.Project;
+import com.project.api.Model.Projeto;
 import com.project.api.dto.TopCountryDTO;
-import com.project.api.Model.TeamInsight;
 
 
 @Service
@@ -27,7 +27,6 @@ public class RoutesService {
     public List<Data> getAllData() {
         return listData;
     }
-
 
     //retorna os supersusers score >=900 and ativo
     public List<Data> getFiltredSuperUsers(){
@@ -55,41 +54,34 @@ public class RoutesService {
             .collect(Collectors.toList());
     }
 
+   public List<String> getNomesDasEquipes(){
+    return listData.stream()
+        .map(p -> p.getEquipe().getNome())
+        .filter(Objects::nonNull)
+        .distinct()
+        .collect(Collectors.toList());
+}
 
-    public List<TeamInsight> teamInsight() {
-    // Cria uma lista para armazenar os insights dos times
-    List<TeamInsight> insights = new ArrayList<>();
-
-    // Agrupa os dados por time
-    Map<String, List<Data>> teamsGrouped = listData.stream()
-            .collect(Collectors.groupingBy(data -> data.getTeam().getName()));
-
-    // Para cada time, calcula os dados
-    for (Map.Entry<String, List<Data>> entry : teamsGrouped.entrySet()) {
-        String teamName = entry.getKey();
-        List<Data> teamMembers = entry.getValue();
-        
-        // Conta a quantidade de usuários no time
-        long totalMembers = teamMembers.size();
-        
-        // Conta a quantidade de líderes no time
-        long leadersCount = teamMembers.stream()
-                .filter(data -> data.getTeam().isLeader())
-                .count();
-
-        // Conta a quantidade de projetos completados no time
-        long completedProjectsCount = teamMembers.stream()
-                .flatMap(data -> data.getTeam().getProjects().stream())
-                .filter(Project::isCompleted)
-                .count();
-        
-        // Cria o TeamInsight e adiciona à lista
-        TeamInsight insight = new TeamInsight(teamName, totalMembers, leadersCount, completedProjectsCount);
-        insights.add(insight);
+    public Map<String, Long> getParticipantesPorEquipe() {
+        return listData.stream()
+            .collect(Collectors.groupingBy(
+                p -> p.getEquipe().getNome(),  // Agrupar pelo nome da equipe
+                Collectors.counting()          // Contar o número de participantes em cada equipe
+            ));
     }
 
-    return insights;
-}
+    // Método para contar líderes por equipe
+    // Método para contar líderes por equipe
+    public Map<String, Long> getLideresPorEquipe() {
+        return listData.stream()
+            .filter(p -> p.getEquipe().isLider() == true)  // Filtra apenas as pessoas com "lider" = true
+            .collect(Collectors.groupingBy(
+                p -> p.getEquipe().getNome(),  // Agrupar pelo nome da equipe
+                Collectors.counting()          // Contar o número de líderes em cada equipe
+            ));
+    }
+
+
 
     
 }

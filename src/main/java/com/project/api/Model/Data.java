@@ -9,7 +9,7 @@ public class Data {
     private int idade;
     private int score;
     private boolean active;
-    private Team team;
+    private Equipe equipe;
 
     @JsonProperty("nome")
     public String getName() {
@@ -53,12 +53,12 @@ public class Data {
         this.active = active;
     }  
 
-    public Team getTeam() {
-        return team;
+    public Equipe getEquipe() {
+        return equipe;
     }
 
-    public void setTeam(Team team) {
-        this.team = team;
+    public void setTeam(Equipe equipe) {
+        this.equipe = equipe;
     }
     
 }
