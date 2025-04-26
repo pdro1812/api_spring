@@ -7,14 +7,13 @@ public class SuperUserResponseDTO {
     private long execution_time_ms;
     private List<String> data;
 
-    public SuperUserResponseDTO(String timestamp, long execution_time_ms, List<String> data){
+    public SuperUserResponseDTO(String timestamp, long execution_time_ms, List<String> data) {
         this.timestamp = timestamp;
         this.execution_time_ms = execution_time_ms;
         this.data = data;
-
     }
-    
-     public String getTimestamp() {
+
+    public String getTimestamp() {
         return timestamp;
     }
 
@@ -24,5 +23,17 @@ public class SuperUserResponseDTO {
 
     public List<String> getData() {
         return data;
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public void setExecution_time_ms(long execution_time_ms) {
+        this.execution_time_ms = execution_time_ms;
+    }
+
+    public void setData(List<String> data) {
+        this.data = data;
     }
 }

@@ -24,9 +24,9 @@ public class RoutesService {
     }
 
     // Retorna todos os nomes
-   public List<Data> getAllData() {
-    return listData;
-}
+    public List<Data> getAllData() {
+        return listData;
+    }
 
 
     //retorna os supersusers score >=900 and ativo
