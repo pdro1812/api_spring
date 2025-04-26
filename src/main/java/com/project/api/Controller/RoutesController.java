@@ -15,6 +15,7 @@ import com.project.api.Model.TeamInsight;
 import com.project.api.Model.Data;
 import com.project.api.Service.RoutesService;
 import com.project.api.dto.SuperUserResponseDTO;
+import com.project.api.dto.TopCountriesResponseDTO;
 import com.project.api.dto.TopCountryDTO;
 import com.project.api.dto.UserResponse;
 
@@ -62,10 +63,20 @@ public class RoutesController {
 
     //Rota para listar os top 5 paises dos superusers
     @GetMapping("/top-countries")
-    public ResponseEntity<List<TopCountryDTO>> listTopCountries(){
+    public ResponseEntity<TopCountriesResponseDTO> listTopCountries(HttpServletRequest request){
+        long start = System.currentTimeMillis();  // Marca o início da execução
         List<TopCountryDTO> topCountries = routesService.getTopCountries();
-        return ResponseEntity.ok(topCountries);
+        long end = System.currentTimeMillis();  // Marca o fim da execução
+
+        TopCountriesResponseDTO response = new TopCountriesResponseDTO(
+            Instant.now().toString(),  // Timestamp atual
+            end - start,               // Tempo de execução
+            topCountries
+        );
+
+        return ResponseEntity.ok(response);
     }
+
     
     //Rota para listar as estatísticas por equipe com base nos membros, projetos e liderança.
    @GetMapping("/teams/insight")
