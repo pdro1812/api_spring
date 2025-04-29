@@ -13,12 +13,16 @@ Swagger
 
 ### 📥 Endpoints
 
-Método	Rota	Descrição
 POST	/users	Recebe e armazena os usuários na memória (simula um banco de dados em memória).
+
 GET	/users/data	Retorna todos os usuários recebidos.
+
 GET	/superusers	Retorna os usuários com score >= 900 e active = true, além do tempo de execução.
+
 GET	/top-countries	Retorna os 5 países com maior número de superusuários.
+
 GET	/team-insights	Agrupa por equipe e retorna: total de membros, líderes, projetos concluídos e porcentagem de conclusão.
+
 GET	/	Health check da aplicação.
 
 ### 🧪 Como executar o projeto localmente
