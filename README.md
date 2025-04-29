@@ -1,5 +1,8 @@
 # 🚀 Desafio Técnico: Performance e Análise de Dados via API
 
+## Desafio original: 
+https://github.com/codecon-dev/desafio-1-1s-vs-3j/blob/main/README.md
+
 ### 📌 Objetivo
 Criar uma API em Java com Spring Boot que receba um arquivo JSON contendo 100.000 usuários e forneça endpoints performáticos e bem estruturados para análise de dados.
 
