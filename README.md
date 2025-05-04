@@ -33,8 +33,8 @@ Certifique-se de ter o Java 17+ e Maven instalados.
 
 Clone o repositório
 ```
-git clone https://github.com/ 
-cd seu-repositorio
+git clone https://github.com/pdro1812/api_spring
+cd api_spring
 
 Compile o projeto
 mvn clean install
